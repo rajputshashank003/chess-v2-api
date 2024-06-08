@@ -62,12 +62,16 @@ export class Game {
             this.player2.send(JSON.stringify({
                 type: MOVE,
                 payload : move,
+                moveCount : this.#moveCount
             }));
+            this.player1.send(JSON.stringify({moveCount : this.#moveCount}))
         } else {
             this.player1.send(JSON.stringify({
                 type:MOVE,
                 payload : move,
-            }))
+                moveCount : this.#moveCount
+            }));
+            this.player2.send(JSON.stringify({moveCount : this.#moveCount}))
         }
         this.#moveCount++;
     }
