@@ -1,6 +1,6 @@
 import { WebSocket } from "ws";
 import { Chess } from "chess.js";
-import { GAME_OVER, INIT_GAME, MOVE } from "./Messages.js";
+import { GAME_OVER, INIT_GAME, MESSAGE, MOVE } from "./Messages.js";
 
 export class Game {
     player1;
@@ -53,8 +53,8 @@ export class Game {
                     winner: winner
                 }
             });
-            this.player1.emit(message);
-            this.player2.emit(message);
+            this.player1.send(message);
+            this.player2.send(message);
             return;
         }
         console.log(this.#moveCount);
@@ -74,5 +74,20 @@ export class Game {
             this.player2.send(JSON.stringify({moveCount : this.#moveCount}))
         }
         this.#moveCount++;
+    }
+    sendMessage( messageToSend, player) {
+        const message1 = JSON.stringify({
+            type: MESSAGE,
+            message : messageToSend,
+            owner : player === this.player1 ? "sender" : "receiver"
+        });
+        const message2 = JSON.stringify({
+            type: MESSAGE,
+            message : messageToSend,
+            owner : player === this.player2 ? "sender" : "receiver"
+        });
+        
+        this.player1.send(message1);
+        this.player2.send(message2);
     }
 }

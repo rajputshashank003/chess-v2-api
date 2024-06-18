@@ -1,5 +1,5 @@
 import { WebSocket } from "ws";
-import { INIT_GAME, MOVE } from "./Messages.js";
+import { INIT_GAME, MESSAGE, MOVE } from "./Messages.js";
 import { Game } from "./Game.js";
 
 export class GameManager {
@@ -42,6 +42,18 @@ export class GameManager {
                     game.makeMove(socket, message.payload.move);
                 } else {
                     console.log('Game not found for move:', message.payload.move);
+                }
+            }
+
+            if(message.type === MESSAGE){
+                const game1 = this.#games.find(game => game.player1 === socket );
+                const game2 = this.#games.find(game => game.player2 === socket );
+                if (game1) {
+                    game1.sendMessage( message.message, game1.player1);
+                } else if (game2) {
+                    game2.sendMessage( message.message, game2.player2);
+                } else {
+                    console.log('Game not found for move:');
                 }
             }
         });
