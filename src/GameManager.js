@@ -20,10 +20,9 @@ export class GameManager {
     addUser(socket) {
         this.#users.push(socket);
         this.#addHandler(socket);
-        socket.send(JSON.stringify({
-            type : GAMES_COUNT,
-            games_count : this.#games.length,
-        }))
+        setTimeout( () => {
+            this.sendGameCount();
+        } , [2000]);
     }
 
     removeUser(socket) {
