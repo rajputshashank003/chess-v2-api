@@ -1,17 +1,21 @@
 import { WebSocket } from "ws";
 import { Chess } from "chess.js";
-import { GAME_OVER, INIT_GAME, MESSAGE, MOVE } from "./Messages.js";
+import { GAME_OVER, INIT_GAME, MESSAGE, MOVE, SPECTARE, INIT_SPECTING, STREAM_OVER, SPECTARE_CONNECTED } from "./Messages.js";
 
 export class Game {
     player1;
     player2;
+    spectares;
+    channelNumber
     board;
     #moveCount;
     #startTime;
 
-    constructor(player1, player2) {
+    constructor(player1, player2, channelNumber) {
         this.player1 = player1;
         this.player2 = player2;
+        this.spectares = [];
+        this.channelNumber = channelNumber;
         this.board = new Chess();
         this.#moveCount = 0;
         this.#startTime = new Date();
@@ -55,16 +59,24 @@ export class Game {
             });
             this.player1.send(message);
             this.player2.send(message);
+            this.spectares.map( ( spectare ) => {
+                spectare.send(JSON.stringify({
+                    type: STREAM_OVER,
+                    payload: {
+                        winner: winner
+                    }
+                }))
+            })
             return;
         }
-        console.log(this.#moveCount);
+
         if(this.#moveCount %2 === 0) {
             this.player2.send(JSON.stringify({
                 type: MOVE,
                 payload : move,
                 moveCount : this.#moveCount
             }));
-            this.player1.send(JSON.stringify({moveCount : this.#moveCount}))
+            this.player1.send(JSON.stringify({moveCount : this.#moveCount}));
         } else {
             this.player1.send(JSON.stringify({
                 type:MOVE,
@@ -73,6 +85,23 @@ export class Game {
             }));
             this.player2.send(JSON.stringify({moveCount : this.#moveCount}))
         }
+
+        const spectareMessage = JSON.stringify( {
+            type : SPECTARE,
+            message : this.board.board(),
+            payload : move, 
+            moveCount : this.#moveCount
+        });
+        const spectareMessageMove = JSON.stringify( {
+            type : MESSAGE,
+            message :"From : " + move.from + " , " + "To : " + move.to ,
+            owner : "sender"
+        });
+        this.spectares.map( (spectare) => {
+            spectare.send(spectareMessage)
+            spectare.send(spectareMessageMove)
+        });
+
         this.#moveCount++;
     }
     sendMessage( messageToSend, player) {
@@ -89,5 +118,21 @@ export class Game {
         
         this.player1.send(message1);
         this.player2.send(message2);
+    }
+
+    addSpectare(socket){
+        this.spectares.push(socket);
+        const spectareMessage = JSON.stringify( {
+            type : INIT_SPECTING,
+            moveCount : this.#moveCount,
+            message : this.board.board(),
+            channelNumber : this.channelNumber
+        });
+        socket.send(spectareMessage);
+        const spectareConnected = JSON.stringify({
+            type : SPECTARE_CONNECTED,
+        });
+        this.player1.send(spectareConnected);
+        this.player2.send(spectareConnected);
     }
 }
