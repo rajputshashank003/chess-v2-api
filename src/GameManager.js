@@ -65,7 +65,8 @@ export class GameManager {
         this.#users.map( ( user) => {
             user.send(JSON.stringify({
                 type : GAMES_COUNT,
-                games_count : this.#games.length
+                games_count : this.#games.length,
+                users_count : this.#users.length
             }))
         })
     }
