@@ -8,6 +8,7 @@ export class Game {
     spectares;
     channelNumber
     board;
+    recording
     #moveCount;
     #startTime;
 
@@ -19,6 +20,7 @@ export class Game {
         this.board = new Chess();
         this.#moveCount = 0;
         this.#startTime = new Date();
+        this.recording = false;
         this.player1.send(JSON.stringify({
             type: INIT_GAME,
             payload : {
@@ -97,6 +99,7 @@ export class Game {
             message :"From : " + move.from + " , " + "To : " + move.to ,
             owner : "sender"
         });
+        if(this.recording) console.log("recording " , move);
         this.spectares.map( (spectare) => {
             spectare.send(spectareMessage)
             spectare.send(spectareMessageMove)
@@ -134,5 +137,10 @@ export class Game {
         });
         this.player1.send(spectareConnected);
         this.player2.send(spectareConnected);
+    }
+
+    startRecording(){
+        this.recording = true;
+        console.log("recording started !");
     }
 }

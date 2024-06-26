@@ -148,6 +148,14 @@ export class GameManager {
                     console.log('Game not found for move:');
                 }
             }
+
+            if(message.type === 'recording_started'){
+                console.log("game manager recording received !");
+                const game = this.#games.find(game => game.player1 === socket || game.player2 === socket);
+                if(game){
+                    game.startRecording();
+                }
+            }
         });
     }
 }
