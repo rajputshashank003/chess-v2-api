@@ -1,5 +1,5 @@
 import { WebSocket } from "ws";
-import { INIT_GAME, MESSAGE, MOVE, SPECTARE , INIT_SPECTING, GAMES_COUNT, OPPONENT_DISCONNECT, STREAM_OVER, CHANNEL_EXIST, GAME_NOT_FOUND} from "./Messages.js";
+import { INIT_GAME, MESSAGE, MOVE, SPECTARE , INIT_SPECTING, GAMES_COUNT, OPPONENT_DISCONNECT, STREAM_OVER, CHANNEL_EXIST, GAME_NOT_FOUND , MESSAGEALL} from "./Messages.js";
 import { Game } from "./Game.js";
 
 export class GameManager {
@@ -155,6 +155,15 @@ export class GameManager {
                 if(game){
                     game.startRecording();
                 }
+            }
+            if(message.type === MESSAGEALL){
+                this.#users.map((user) => {
+                    user.send(JSON.stringify({
+                        type : MESSAGEALL,
+                        message : message.message ,
+                        owner : user === socket ? "sender" : "receiver" ,
+                    }))
+                })
             }
         });
     }

@@ -10,3 +10,4 @@ export const STREAM_OVER = 'stream_over';
 export const SPECTARE_CONNECTED = 'spectare_connected';
 export const CHANNEL_EXIST = 'channel_exist';
 export const GAME_NOT_FOUND = 'game_not_found';
+export const MESSAGEALL = 'message_to_all';
