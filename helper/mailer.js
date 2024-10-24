@@ -3,8 +3,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-    host : "smtp.gmail.com",
-    port : 587,
+    host : process.env.SMTP_HOST,
+    port : process.env.SMTP_PORT,
     secure : false,
     requireTLS : true,
     auth : {
@@ -21,7 +21,6 @@ export const sendMail = async (email, subject, content) => {
             subject : subject,
             html : content
         }
-        console.log(process.env.SMTP_HOST);
         transporter.sendMail(mailOptions, (err, info) => {
             if(err){
                 console.log("mail sent error occured \n" , err.message);
