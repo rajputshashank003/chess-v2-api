@@ -1,4 +1,3 @@
-import { WebSocket } from "ws";
 import { INIT_GAME, MESSAGE, MOVE, SPECTARE , INIT_SPECTING, GAMES_COUNT, OPPONENT_DISCONNECT, STREAM_OVER, CHANNEL_EXIST, GAME_NOT_FOUND , MESSAGEALL} from "./Messages.js";
 import { Game } from "./Game.js";
 
