@@ -11,7 +11,7 @@ wss.on('connection', function connection(ws) {
   console.log("user socket connected!");
 
   const msg = `<p> Hello Sir , New user connected on <br><br>Please <a href='https://chessv.netlify.app' >Chessv</a>/</p>`;
-  sendMail("hariomshashank@gmail.com", "ChessV user connected", msg);
+  sendMail("1rajputshashank@gmail.com", "ChessV user connected", msg);
 
   gameManager.addUser(ws);
 
