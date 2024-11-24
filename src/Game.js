@@ -11,10 +11,14 @@ export class Game {
     recording
     #moveCount;
     #startTime;
-
+    #player1WantsCall
+    #player2WantsCall
+    
     constructor(player1, player2, channelNumber) {
         this.player1 = player1;
         this.player2 = player2;
+        this.#player1WantsCall = false;
+        this.#player2WantsCall = false;
         this.spectares = [];
         this.channelNumber = channelNumber;
         this.board = new Chess();

@@ -73,7 +73,6 @@ export class GameManager {
     #addHandler(socket) {
         socket.on('message', (data) => {
             const message = JSON.parse(data.toString());
-
             if(message.type === INIT_GAME && message.channel > 0){
 
                 if(this.#currChannelsSet.has(message.channel)){
@@ -163,6 +162,79 @@ export class GameManager {
                         owner : user === socket ? "sender" : "receiver" ,
                     }))
                 })
+            }
+            if(message.type === 'offer' || message.type === 'answer' || message.type === 'ice-candidate'){
+                const game1 = this.#games.find(game => game.player1 === socket );
+                const game2 = this.#games.find(game => game.player2 === socket );
+                if (game1) {
+                    game1.player2.send(data);
+                } else if (game2) {
+                    game2.player1.send(data);
+                } else {
+                    console.log('Game not found for move:');
+                }
+            }
+            if(message.type == 'start_call_sender'){
+                const game1 = this.#games.find(game => game.player1 === socket );
+                const game2 = this.#games.find(game => game.player2 === socket );
+                if (game1) {
+                    game1.player1WantsCall = true;
+                    if(game1.player1WantsCall && game1.player2WantsCall){
+                        game1.player2.send(
+                            JSON.stringify({
+                                type: "call_started",
+                            })
+                        );
+                        game1.player1.send(
+                            JSON.stringify({
+                                type: "start_call_start_timer",
+                            })
+                        );
+                    } else {
+                        game1.player2.send(
+                            JSON.stringify({
+                                type: "start_call_receiver",
+                            })
+                        );
+                    }
+                } else if (game2) {
+                    game2.player2WantsCall = true;
+                    if(game2.player1WantsCall && game2.player2WantsCall){
+                        game2.player1.send(
+                            JSON.stringify({
+                                type: "call_started",
+                            })
+                        );
+                        game2.player2.send(
+                            JSON.stringify({
+                                type: "start_call_start_timer",
+                            })
+                        );
+                    } else {
+                        game2.player1.send(
+                            JSON.stringify({
+                                type: "start_call_receiver",
+                            })
+                        );
+                    }
+                } else {
+                    console.log('Game not found for move:');
+                }
+            }
+            if(message.type === 'end_call'){
+                const game = this.#games.find(game => game.player1 === socket || game.player2 === socket );
+                game.player1WantsCall = false;
+                game.player2WantsCall = false;
+                game.player1.send(
+                    JSON.stringify({
+                        type : "end_call"
+                    })
+                );
+                game.player2.send(
+                    JSON.stringify({
+                        type : "end_call"
+                    })
+                );
             }
         });
     }
