@@ -1,4 +1,11 @@
-import { INIT_GAME, MESSAGE, MOVE, SPECTARE , INIT_SPECTING, GAMES_COUNT, OPPONENT_DISCONNECT, STREAM_OVER, CHANNEL_EXIST, GAME_NOT_FOUND , MESSAGEALL} from "./Messages.js";
+import { 
+    INIT_GAME, MESSAGE, MOVE, SPECTARE , 
+    INIT_SPECTING, GAMES_COUNT, OPPONENT_DISCONNECT, 
+    STREAM_OVER, CHANNEL_EXIST, GAME_NOT_FOUND , 
+    MESSAGEALL, OFFER, ANSWER, ICE_CANDIDATE, 
+    START_CALL_SENDER, CALL_STARTED, START_CALL_START_TIMER, 
+    START_CALL_RECEIVER, END_CALL
+} from "./Messages.js";
 import { Game } from "./Game.js";
 
 export class GameManager {
@@ -163,7 +170,7 @@ export class GameManager {
                     }))
                 })
             }
-            if(message.type === 'offer' || message.type === 'answer' || message.type === 'ice-candidate'){
+            if(message.type === OFFER || message.type === ANSWER || message.type === ICE_CANDIDATE){
                 const game1 = this.#games.find(game => game.player1 === socket );
                 const game2 = this.#games.find(game => game.player2 === socket );
                 if (game1) {
@@ -174,7 +181,7 @@ export class GameManager {
                     console.log('Game not found for move:');
                 }
             }
-            if(message.type == 'start_call_sender'){
+            if(message.type == START_CALL_SENDER){
                 const game1 = this.#games.find(game => game.player1 === socket );
                 const game2 = this.#games.find(game => game.player2 === socket );
                 if (game1) {
@@ -182,18 +189,18 @@ export class GameManager {
                     if(game1.player1WantsCall && game1.player2WantsCall){
                         game1.player2.send(
                             JSON.stringify({
-                                type: "call_started",
+                                type: CALL_STARTED,
                             })
                         );
                         game1.player1.send(
                             JSON.stringify({
-                                type: "start_call_start_timer",
+                                type: START_CALL_START_TIMER,
                             })
                         );
                     } else {
                         game1.player2.send(
                             JSON.stringify({
-                                type: "start_call_receiver",
+                                type: START_CALL_RECEIVER,
                             })
                         );
                     }
@@ -202,18 +209,18 @@ export class GameManager {
                     if(game2.player1WantsCall && game2.player2WantsCall){
                         game2.player1.send(
                             JSON.stringify({
-                                type: "call_started",
+                                type:CALL_STARTED,
                             })
                         );
                         game2.player2.send(
                             JSON.stringify({
-                                type: "start_call_start_timer",
+                                type: START_CALL_START_TIMER,
                             })
                         );
                     } else {
                         game2.player1.send(
                             JSON.stringify({
-                                type: "start_call_receiver",
+                                type: START_CALL_RECEIVER,
                             })
                         );
                     }
@@ -221,18 +228,18 @@ export class GameManager {
                     console.log('Game not found for move:');
                 }
             }
-            if(message.type === 'end_call'){
+            if(message.type === END_CALL){
                 const game = this.#games.find(game => game.player1 === socket || game.player2 === socket );
                 game.player1WantsCall = false;
                 game.player2WantsCall = false;
                 game.player1.send(
                     JSON.stringify({
-                        type : "end_call"
+                        type : END_CALL
                     })
                 );
                 game.player2.send(
                     JSON.stringify({
-                        type : "end_call"
+                        type : END_CALL
                     })
                 );
             }
