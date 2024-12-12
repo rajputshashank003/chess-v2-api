@@ -19,3 +19,6 @@ export const CALL_STARTED = 'call_started';
 export const END_CALL = 'end_call';
 export const START_CALL_START_TIMER = 'start_call_start_timer';
 export const START_CALL_SENDER = "start_call_sender";
+export const HELP_RECEIVED="helpReceived"
+export const ASK_FOR_HELP="askHelp"
+export const GAMEPLAY_TIPS="gameplay_tips";
