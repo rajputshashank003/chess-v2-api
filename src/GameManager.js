@@ -147,7 +147,6 @@ export class GameManager {
                     const gemini = new Gemini(process.env.API_GEMINI_AI,  {
                         model: "gemini-1.5-pro-latest",
                     });
-                    console.log();
                     const getMoveFor = `You are playing a chess game as the competitor against another player. 
                         It's your turn to make the best possible valid chess move.
 
@@ -165,12 +164,9 @@ export class GameManager {
                     
                     try {
                         const cleanedResponse = response.replace(/```json|```/g, '').trim();
-                        console.log(cleanedResponse);
                         const parsedResponse = JSON.parse(cleanedResponse);
                         const move = parsedResponse.move;
-                        console.log("Parsed Move:", move);
                         if (move && move.from && move.to) {
-                            console.log(`Move from ${move.from} to ${move.to}`);
                             game.player1.send(JSON.stringify({
                                 type : "ai_move",
                                 payload : {
