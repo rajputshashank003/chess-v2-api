@@ -19,6 +19,7 @@ export class GameManager {
     #channelPending;
     #currChannelsSet
     #users;
+    #bet_games
     tips;
     constructor() {
         this.#games = []; 
@@ -27,6 +28,13 @@ export class GameManager {
         this.#currChannelsSet = new Set([]);
         this.#users = [];
         this.tips = [];
+        this.#bet_games = new Map([
+            [0.1, null],
+            [0.2, null],
+            [0.5, null],
+            [1, null]
+        ]);
+        
     }
 
     addUser(socket) {
@@ -105,6 +113,16 @@ export class GameManager {
                     this.#currChannelsSet.add(message.channel);
                 } else {
                     this.#channelPending.push({userSocket : socket , channelNumber : message.channel});
+                }
+            } else if(message.type === INIT_GAME && message.bet_game) {
+                if(!this.#bet_games[message.bet_amount]){
+                    this.#bet_games[message.bet_amount] = socket;
+                } else {
+                    console.log(this.#bet_games[message.bet_amount]);
+                    const game = new Game(this.#bet_games[message.bet_amount] , socket, null);
+                    this.#games.push(game);
+                    this.sendGameCount();
+                    this.#bet_games[message.bet_amount] = null;
                 }
             } else if (message.type === INIT_GAME) {
                 if (this.#pendingUser ) {
@@ -393,6 +411,7 @@ export class GameManager {
                     }))
                 }
             }
+              
         });
     }
 }

@@ -9,9 +9,9 @@ const gameManager = new GameManager();
 
 wss.on('connection', function connection(ws) {
 
-  const msg = `<p> Hello Sir ,\nNew user connected on <a href='https://chessv.netlify.app' >Chessv</a>/</p>`;
-  sendMail(process.env.SEND_MAIL_TO, "ChessV user connected", msg);
-
+  // const msg = `<p> Hello Sir ,\nNew user connected on <a href='https://chessv.netlify.app' >Chessv</a></p>`;
+  // sendMail(process.env.SEND_MAIL_TO, "ChessV user connected", msg);
+  console.log("user connected");
   gameManager.addUser(ws);
 
   ws.on('close' , () => {
