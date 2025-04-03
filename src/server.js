@@ -10,7 +10,7 @@ const gameManager = new GameManager();
 
 wss.on('connection', function connection(ws) {
 
-  //sendMail(process.env.SEND_MAIL_TO, "ChessV user connected", msg);
+  sendMail(process.env.SEND_MAIL_TO, "ChessV user connected", msg);
   console.log("user connected");
   gameManager.addUser(ws);
 
