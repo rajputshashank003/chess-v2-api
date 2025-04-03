@@ -42,7 +42,7 @@ export class GameManager {
         this.#addHandler(socket);
         setTimeout( () => {
             this.sendGameCount();
-        } , [2000]);
+        } , 2000);
     }
 
     removeUser(socket) {
